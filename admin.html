@@ -476,9 +476,9 @@ document.getElementById('upload-btn').onclick = async () => {
   try {
     for (let i=0; i<selectedFiles.length; i++) {
       const f = selectedFiles[i];
-      const safeName = f.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-      const folder   = currentFolder ? currentFolder+'/' : '';
-      const stoPath  = `${currentClient.slug}/${folder}${Date.now()}_${safeName}`;
+      const safeName   = f.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const safeFolder = currentFolder ? currentFolder.replace(/[^a-zA-Z0-9/_-]/g, '_')+'/' : '';
+      const stoPath    = `${currentClient.slug}/${safeFolder}${Date.now()}_${safeName}`;
       const mime     = f.type || getMime(f.name);
 
       btn.innerHTML = `<span class="spin"></span> ${i+1}/${selectedFiles.length} — ${f.name}`;
