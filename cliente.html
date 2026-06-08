@@ -213,10 +213,9 @@ async function renderExplorer() {
   }
 
   try {
-    const folderParam = currentFolder ? `eq.${encodeURIComponent(currentFolder)}` : 'is.null';
     const [folders, files] = await Promise.all([
-      api(`/rest/v1/client_folders?client_id=eq.${clientData.id}&parent=${folderParam}&order=name.asc`),
-      api(`/rest/v1/client_files?client_id=eq.${clientData.id}&folder=${folderParam}&order=name.asc`)
+      api(`/rest/v1/client_folders?client_id=eq.${clientData.id}&parent=${currentFolder ? 'eq.'+encodeURIComponent(currentFolder) : 'is.null'}&order=name.asc`),
+      api(`/rest/v1/client_files?client_id=eq.${clientData.id}&folder=${currentFolder ? 'eq.'+encodeURIComponent(currentFolder) : 'is.null'}&order=name.asc`)
     ]);
 
     currentFiles = files;
