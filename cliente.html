@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Identidade Visual</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0a;--s:#111;--s2:#171717;--s3:#1e1e1e;
+  --b:#242424;--b2:#2e2e2e;--a:#c8f04c;--t:#f0f0f0;--t2:#888;--r:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--t);font-family:'Inter',sans-serif;min-height:100vh;font-size:15px;}
+
+header{position:sticky;top:0;z-index:100;background:rgba(10,10,10,.96);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--b);padding:.8rem 1.5rem;
+  display:flex;align-items:center;justify-content:space-between;}
+.brand{font-size:.95rem;font-weight:700;letter-spacing:-.04em;}
+.brand b{color:var(--a);}
+.client-name{font-size:.82rem;color:var(--t2);}
+.client-name strong{color:var(--t);}
+
+.main{max-width:960px;margin:0 auto;padding:2rem 1.25rem;}
+.hero{margin-bottom:2rem;}
+.hero h1{font-size:1.5rem;font-weight:700;letter-spacing:-.04em;margin-bottom:.3rem;}
+.hero h1 span{color:var(--a);}
+.hero p{color:var(--t2);font-size:.85rem;}
+
+/* FOLDER GRID */
+.folder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem;margin-bottom:1.25rem;}
+.folder-card{background:var(--s);border:1px solid var(--b);border-radius:12px;
+  padding:1.1rem;text-align:center;cursor:pointer;transition:all .2s;}
+.folder-card:hover{border-color:var(--b2);background:var(--s2);transform:translateY(-2px);}
+.folder-icon{font-size:2rem;margin-bottom:.5rem;}
+.folder-name{font-size:.8rem;font-weight:500;color:var(--t2);}
+.folder-count{font-size:.7rem;color:var(--t2);opacity:.6;margin-top:.2rem;}
+
+/* FILES GRID */
+.files-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.85rem;}
+.file-card{background:var(--s);border:1px solid var(--b);border-radius:12px;overflow:hidden;transition:border-color .2s;}
+.file-card:hover{border-color:var(--b2);}
+
+/* IMAGE PREVIEW */
+.file-preview{width:100%;aspect-ratio:1;background:var(--s2);position:relative;cursor:pointer;overflow:hidden;}
+.file-preview img{width:100%;height:100%;object-fit:contain;display:block;padding:.5rem;}
+.file-preview .pdf-thumb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;}
+.file-preview .other-thumb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;}
+.preview-overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);
+  display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;}
+.file-preview:hover .preview-overlay{opacity:1;}
+.preview-btn{background:var(--a);color:#000;border:none;padding:.5rem 1rem;border-radius:6px;
+  font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;}
+
+.file-info{padding:.75rem .85rem;}
+.file-name{font-size:.78rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:.15rem;}
+.file-size{font-size:.7rem;color:var(--t2);margin-bottom:.65rem;}
+.file-actions{display:flex;gap:.4rem;}
+.btn-dl{flex:1;background:var(--a);color:#000;border:none;padding:.5rem;border-radius:6px;
+  font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:opacity .15s;}
+.btn-dl:hover{opacity:.85;}
+.btn-view{background:transparent;border:1px solid var(--b2);color:var(--t2);padding:.5rem .75rem;
+  border-radius:6px;font-family:'Inter',sans-serif;font-size:.78rem;cursor:pointer;transition:all .15s;}
+.btn-view:hover{background:var(--s2);color:var(--t);}
+
+/* DOWNLOAD ALL */
+.dl-all-wrap{margin-bottom:1rem;}
+.btn-dl-all{width:100%;background:var(--s);border:1px solid var(--b2);color:var(--t2);padding:.65rem;
+  border-radius:var(--r);font-family:'Inter',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;transition:all .15s;}
+.btn-dl-all:hover{background:var(--s2);color:var(--t);}
+.btn-dl-all:disabled{opacity:.4;cursor:not-allowed;}
+
+/* BACK */
+.back-btn{display:none;align-items:center;gap:.5rem;background:var(--s2);border:1px solid var(--b2);
+  color:var(--t2);padding:.45rem .9rem;border-radius:var(--r);cursor:pointer;font-family:'Inter',sans-serif;
+  font-size:.8rem;font-weight:500;margin-bottom:.85rem;transition:all .15s;border:none;}
+.back-btn:hover{background:var(--s3);color:var(--t);}
+.back-btn.show{display:flex;}
+
+.breadcrumb{display:flex;align-items:center;gap:.4rem;margin-bottom:1rem;font-size:.78rem;color:var(--t2);flex-wrap:wrap;}
+.breadcrumb span{cursor:pointer;transition:color .15s;}
+.breadcrumb span:hover{color:var(--t);}
+.breadcrumb .sep{color:var(--b2);}
+.breadcrumb .cur{color:var(--t);font-weight:500;cursor:default;}
+
+/* LIGHTBOX */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:500;
+  display:none;align-items:center;justify-content:center;padding:1rem;}
+.lightbox.open{display:flex;}
+.lightbox-inner{max-width:90vw;max-height:90vh;position:relative;}
+.lightbox-inner img{max-width:90vw;max-height:85vh;border-radius:8px;object-fit:contain;display:block;}
+.lightbox-close{position:absolute;top:-2.5rem;right:0;background:none;border:none;
+  color:#aaa;font-size:1.5rem;cursor:pointer;line-height:1;}
+.lightbox-close:hover{color:#fff;}
+.lightbox-dl{position:absolute;bottom:-3rem;left:50%;transform:translateX(-50%);
+  background:var(--a);color:#000;border:none;padding:.5rem 1.5rem;border-radius:6px;
+  font-family:'Inter',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;}
+
+/* NOT FOUND */
+#not-found{display:none;text-align:center;padding:5rem 2rem;}
+#not-found .ico{font-size:3rem;margin-bottom:1rem;}
+#not-found p{color:var(--t2);}
+
+/* MISC */
+.empty{text-align:center;padding:3rem 1rem;color:var(--t2);}
+.empty .ico{font-size:2.5rem;margin-bottom:.75rem;}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);
+  background:var(--s);border:1px solid var(--b2);color:var(--t);padding:.65rem 1.25rem;
+  border-radius:8px;font-size:.82rem;opacity:0;pointer-events:none;transition:opacity .25s;z-index:9999;white-space:nowrap;}
+.toast.show{opacity:1;}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid #333;border-top-color:var(--a);
+  border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle;}
+@keyframes sp{to{transform:rotate(360deg);}}
+
+footer{padding:1.25rem;text-align:center;font-size:.72rem;color:#333;border-top:1px solid var(--b);margin-top:3rem;}
+
+@media(max-width:480px){
+  .files-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}
+  .folder-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">id<b>visual</b></div>
+  <div class="client-name">Olá, <strong id="hdr-name">—</strong></div>
+</header>
+
+<div class="main" id="main-content" style="display:none;">
+  <div class="hero">
+    <h1>Sua <span>identidade visual</span></h1>
+    <p>Visualize e baixe seus arquivos abaixo.</p>
+  </div>
+  <button class="back-btn" id="back-btn">← Voltar</button>
+  <div class="breadcrumb" id="breadcrumb"><span class="cur">📁 Raiz</span></div>
+  <div class="dl-all-wrap" id="dl-all-wrap" style="display:none;">
+    <button class="btn-dl-all" id="btn-dl-all">⬇ Baixar todos os arquivos desta pasta</button>
+  </div>
+  <div id="explorer"><div class="empty"><span class="spin"></span></div></div>
+</div>
+
+<div id="not-found">
+  <div class="ico">🔍</div>
+  <p>Apresentação não encontrada.<br>Verifique o link com quem te enviou.</p>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-inner" id="lightbox-inner">
+    <button class="lightbox-close" id="lb-close">✕</button>
+    <img id="lb-img" src="" alt=""/>
+    <button class="lightbox-dl" id="lb-dl">⬇ Baixar</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<footer>idvisual · seus arquivos sempre disponíveis</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+const SUPA_URL = 'https://wxjpwvfgxhrigmsxpygy.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4anB3dmZneGhyaWdtc3hweWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzMDAzNTUsImV4cCI6MjA5NDg3NjM1NX0.n_09l57PL8vMS10Ie8tGZq5VZbp_nHSNiiIg9LhklAA';
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+let clientData    = null;
+let currentFolder = null;
+let currentFiles  = [];
+
+function toast(msg, ms=2500) {
+  const t = document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), ms);
+}
+
+async function api(path) {
+  const res = await fetch(SUPA_URL+path, { headers:{'apikey':SUPA_KEY,'Content-Type':'application/json'} });
+  if (!res.ok) throw new Error(res.statusText);
+  return res.json();
+}
+
+// ── INIT ──
+async function init() {
+  const slug = location.pathname.split('/').filter(Boolean).pop();
+  if (!slug || slug==='c') { document.getElementById('not-found').style.display='block'; return; }
+  try {
+    const clients = await api(`/rest/v1/clients?slug=eq.${encodeURIComponent(slug)}&select=*`);
+    if (!clients.length) { document.getElementById('not-found').style.display='block'; return; }
+    clientData = clients[0];
+    document.getElementById('hdr-name').textContent = clientData.name.split(' ')[0];
+    document.title = clientData.name + ' — ID Visual';
+    document.getElementById('main-content').style.display='block';
+    renderExplorer();
+  } catch(e) {
+    document.getElementById('not-found').style.display='block';
+  }
+}
+
+// ── EXPLORER ──
+async function renderExplorer() {
+  const exp = document.getElementById('explorer');
+  exp.innerHTML = '<div class="empty"><span class="spin"></span></div>';
+  updateBreadcrumb();
+
+  const backBtn = document.getElementById('back-btn');
+  if (currentFolder) {
+    backBtn.classList.add('show');
+    const parts = currentFolder.split('/');
+    backBtn.onclick = () => { currentFolder = parts.length>1 ? parts.slice(0,-1).join('/') : null; renderExplorer(); };
+  } else {
+    backBtn.classList.remove('show');
+  }
+
+  try {
+    const folderParam = currentFolder ? `eq.${encodeURIComponent(currentFolder)}` : 'is.null';
+    const [folders, files] = await Promise.all([
+      api(`/rest/v1/client_folders?client_id=eq.${clientData.id}&parent=${folderParam}&order=name.asc`),
+      api(`/rest/v1/client_files?client_id=eq.${clientData.id}&folder=${folderParam}&order=name.asc`)
+    ]);
+
+    currentFiles = files;
+
+    // show/hide download all
+    const dlAllWrap = document.getElementById('dl-all-wrap');
+    dlAllWrap.style.display = files.length ? 'block' : 'none';
+
+    if (!folders.length && !files.length) {
+      exp.innerHTML='<div class="empty"><div class="ico">📂</div><p>Nenhum arquivo disponível ainda.</p></div>'; return;
+    }
+    exp.innerHTML='';
+
+    // FOLDERS
+    if (folders.length) {
+      const grid = document.createElement('div'); grid.className='folder-grid';
+      for (const f of folders) {
+        // count files in this folder
+        let count = 0;
+        try {
+          const fc = await api(`/rest/v1/client_files?client_id=eq.${clientData.id}&folder=eq.${encodeURIComponent(f.path)}&select=id`);
+          count = fc.length;
+        } catch {}
+        const card = document.createElement('div'); card.className='folder-card';
+        card.innerHTML=`<div class="folder-icon">📁</div>
+          <div class="folder-name">${f.name}</div>
+          <div class="folder-count">${count} arquivo(s)</div>`;
+        card.onclick = () => { currentFolder=f.path; renderExplorer(); };
+        grid.appendChild(card);
+      }
+      exp.appendChild(grid);
+    }
+
+    // FILES
+    if (files.length) {
+      const grid = document.createElement('div'); grid.className='files-grid';
+      for (const f of files) {
+        const card = buildFileCard(f);
+        grid.appendChild(card);
+      }
+      exp.appendChild(grid);
+    }
+  } catch(e) { exp.innerHTML=`<div class="empty"><p>Erro: ${e.message}</p></div>`; }
+}
+
+function buildFileCard(f) {
+  const card = document.createElement('div'); card.className='file-card';
+  const isImg = /\.(png|jpg|jpeg|webp|gif|svg)$/i.test(f.name);
+  const isPdf = /\.pdf$/i.test(f.name);
+  const size  = f.size<1048576 ? Math.round(f.size/1024)+'KB' : (f.size/1048576).toFixed(1)+'MB';
+
+  let previewHTML = '';
+  if (isImg) {
+    previewHTML = `<div class="file-preview" data-url="${f.url}" data-name="${f.name}" data-type="img">
+      <img src="${f.url}" loading="lazy" alt="${f.name}"/>
+      <div class="preview-overlay"><button class="preview-btn">🔍 Ver</button></div>
+    </div>`;
+  } else if (isPdf) {
+    previewHTML = `<div class="file-preview" data-url="${f.url}" data-name="${f.name}" data-type="pdf" id="pdf-${btoa(f.id||f.name).replace(/[^a-z0-9]/gi,'')}">
+      <div class="pdf-thumb">📄</div>
+      <div class="preview-overlay"><button class="preview-btn">🔍 Ver</button></div>
+    </div>`;
+  } else {
+    previewHTML = `<div class="file-preview" style="cursor:default;">
+      <div class="other-thumb">${getFileIcon(f.name)}</div>
+    </div>`;
+  }
+
+  card.innerHTML = `${previewHTML}
+    <div class="file-info">
+      <div class="file-name" title="${f.name}">${f.name}</div>
+      <div class="file-size">${size}</div>
+      <div class="file-actions">
+        ${isImg||isPdf ? `<button class="btn-view" data-url="${f.url}" data-name="${f.name}" data-type="${isImg?'img':'pdf'}">👁 Ver</button>` : ''}
+        <button class="btn-dl" data-url="${f.url}" data-name="${f.name}">⬇ Baixar</button>
+      </div>
+    </div>`;
+
+  // events
+  const preview = card.querySelector('.file-preview[data-type]');
+  if (preview) {
+    preview.onclick = () => openPreview(f.url, f.name, preview.dataset.type);
+    // render PDF thumb
+    if (isPdf) renderPdfThumb(f.url, preview);
+  }
+  card.querySelectorAll('[data-type]').forEach(btn => {
+    if (btn.tagName==='BUTTON') btn.onclick = () => openPreview(f.url, f.name, btn.dataset.type);
+  });
+  card.querySelectorAll('.btn-dl').forEach(btn => btn.onclick = () => dlFile(btn.dataset.url, btn.dataset.name));
+
+  return card;
+}
+
+// ── PDF THUMB ──
+async function renderPdfThumb(url, container) {
+  try {
+    const pdf  = await pdfjsLib.getDocument(url).promise;
+    const page = await pdf.getPage(1);
+    const vp   = page.getViewport({scale:.5});
+    const c    = document.createElement('canvas');
+    c.width=vp.width; c.height=vp.height;
+    c.style.cssText='width:100%;height:100%;object-fit:contain;display:block;';
+    await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
+    const thumbDiv = container.querySelector('.pdf-thumb');
+    if (thumbDiv) thumbDiv.replaceWith(c);
+  } catch {}
+}
+
+// ── LIGHTBOX ──
+let lbCurrentUrl='', lbCurrentName='';
+function openPreview(url, name, type) {
+  lbCurrentUrl=url; lbCurrentName=name;
+  if (type==='img') {
+    document.getElementById('lb-img').src=url;
+    document.getElementById('lb-img').style.display='block';
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow='hidden';
+  } else if (type==='pdf') {
+    // open PDF in new tab for viewing
+    window.open(url, '_blank');
+  }
+}
+
+document.getElementById('lb-close').onclick = closeLightbox;
+document.getElementById('lightbox').onclick = e => { if(e.target===e.currentTarget) closeLightbox(); };
+document.getElementById('lb-dl').onclick = () => dlFile(lbCurrentUrl, lbCurrentName);
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeLightbox(); });
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.getElementById('lb-img').src='';
+  document.body.style.overflow='';
+}
+
+// ── DOWNLOAD ──
+async function dlFile(url, name) {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  if (isIOS) { window.open(url,'_blank'); return; }
+  try {
+    const res  = await fetch(url);
+    const blob = await res.blob();
+    const burl = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href=burl; a.download=name;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(burl),5000);
+  } catch { window.open(url,'_blank'); }
+}
+
+// ── DOWNLOAD ALL ──
+document.getElementById('btn-dl-all').onclick = async function() {
+  if (!currentFiles.length) return;
+  this.disabled=true; this.textContent='Baixando...';
+  for (let i=0; i<currentFiles.length; i++) {
+    const f = currentFiles[i];
+    this.textContent=`Baixando ${i+1}/${currentFiles.length}...`;
+    await dlFile(f.url, f.name);
+    await new Promise(r=>setTimeout(r,800));
+  }
+  this.disabled=false; this.textContent='⬇ Baixar todos os arquivos desta pasta';
+};
+
+// ── BREADCRUMB ──
+function updateBreadcrumb() {
+  const bc = document.getElementById('breadcrumb');
+  if (!currentFolder) { bc.innerHTML='<span class="cur">📁 Raiz</span>'; return; }
+  const parts = currentFolder.split('/');
+  let html='<span id="bc-root">📁 Raiz</span>';
+  parts.forEach((p,i)=>{
+    html+=' <span class="sep">/</span> ';
+    if (i===parts.length-1) html+=`<span class="cur">${p}</span>`;
+    else html+=`<span data-path="${parts.slice(0,i+1).join('/')}">${p}</span>`;
+  });
+  bc.innerHTML=html;
+  document.getElementById('bc-root').onclick=()=>{currentFolder=null;renderExplorer();};
+  bc.querySelectorAll('[data-path]').forEach(el=>el.onclick=()=>{currentFolder=el.dataset.path;renderExplorer();});
+}
+
+function getFileIcon(name) {
+  const ext=name.split('.').pop().toLowerCase();
+  if (ext==='pdf') return '📄';
+  if (['zip','rar'].includes(ext)) return '📦';
+  if (['ttf','otf','woff','woff2'].includes(ext)) return '🔤';
+  if (['ai','eps','psd'].includes(ext)) return '🎨';
+  if (['doc','docx'].includes(ext)) return '📝';
+  return '📎';
+}
+
+init();
+</script>
+</body>
+</html>

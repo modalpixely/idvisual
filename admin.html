@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ID Visual — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0a;--s:#111;--s2:#171717;--s3:#1e1e1e;
+  --b:#242424;--b2:#2e2e2e;--a:#c8f04c;--t:#f0f0f0;--t2:#888;--r:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--t);font-family:'Inter',sans-serif;min-height:100vh;font-size:15px;}
+
+/* LOGIN */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem;
+  background:radial-gradient(ellipse 60% 40% at 50% 0%,#1c2e00,var(--bg));}
+.login-card{background:var(--s);border:1px solid var(--b);border-radius:16px;padding:2.5rem 2rem;width:100%;max-width:380px;}
+.brand{font-size:1.4rem;font-weight:700;letter-spacing:-.05em;margin-bottom:.2rem;}
+.brand b{color:var(--a);}
+.sub{color:var(--t2);font-size:.82rem;margin-bottom:2rem;}
+.field{margin-bottom:.85rem;}
+.field label{display:block;font-size:.7rem;font-weight:500;color:var(--t2);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.08em;}
+.field input{width:100%;background:var(--s2);border:1px solid var(--b);color:var(--t);
+  padding:.7rem .9rem;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:.9rem;outline:none;transition:border-color .15s;}
+.field input:focus{border-color:var(--a);}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;
+  padding:.65rem 1.25rem;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:.85rem;font-weight:600;
+  cursor:pointer;border:none;transition:opacity .15s;}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn.primary{background:var(--a);color:#000;width:100%;padding:.75rem;}
+.btn.primary:hover{opacity:.85;}
+.btn.ghost{background:transparent;border:1px solid var(--b);color:var(--t2);}
+.btn.ghost:hover{background:var(--s2);color:var(--t);border-color:var(--b2);}
+.btn.danger{background:transparent;border:1px solid #2a1010;color:#ff5757;}
+.btn.danger:hover{background:#1a0808;}
+.btn.sm{padding:.4rem .85rem;font-size:.78rem;}
+.btn.accent{background:var(--a);color:#000;}
+.btn.accent:hover{opacity:.85;}
+.err{color:#ff5757;font-size:.78rem;margin-top:.65rem;display:none;}
+
+/* APP */
+#app{display:none;}
+header{position:sticky;top:0;z-index:200;background:rgba(10,10,10,.96);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--b);padding:.8rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
+.brand-sm{font-size:.95rem;font-weight:700;letter-spacing:-.04em;}
+.brand-sm b{color:var(--a);}
+
+.main{max-width:1040px;margin:0 auto;padding:2rem 1.25rem;}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem;margin-bottom:2rem;}
+.stat{background:var(--s);border:1px solid var(--b);border-radius:var(--r);padding:1rem 1.25rem;}
+.stat-label{font-size:.7rem;font-weight:500;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.35rem;}
+.stat-value{font-size:1.75rem;font-weight:700;color:var(--a);letter-spacing:-.03em;}
+
+/* TABS */
+.tabs{display:flex;gap:.2rem;background:var(--s);border:1px solid var(--b);border-radius:var(--r);padding:.25rem;margin-bottom:2rem;}
+.tab{flex:1;text-align:center;padding:.5rem;border-radius:6px;cursor:pointer;font-size:.82rem;font-weight:500;color:var(--t2);transition:all .15s;}
+.tab.active{background:var(--a);color:#000;font-weight:600;}
+
+/* PANEL */
+.panel{background:var(--s);border:1px solid var(--b);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;}
+.panel-title{font-size:.92rem;font-weight:600;letter-spacing:-.02em;margin-bottom:1.25rem;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem;}
+@media(max-width:560px){.row2{grid-template-columns:1fr;}}
+.fi{display:flex;flex-direction:column;gap:.35rem;}
+.fi label{font-size:.7rem;font-weight:500;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;}
+.fi input,.fi select{width:100%;background:var(--s2);border:1px solid var(--b);color:var(--t);
+  padding:.65rem .9rem;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:.88rem;outline:none;transition:border-color .15s;}
+.fi input:focus,.fi select:focus{border-color:var(--a);}
+
+/* DROP ZONE */
+.drop{border:2px dashed var(--b);border-radius:10px;padding:1.75rem;text-align:center;
+  cursor:pointer;transition:all .2s;margin-bottom:.75rem;}
+.drop:hover,.drop.over{border-color:var(--a);background:rgba(200,240,76,.03);}
+.drop p{color:var(--t2);font-size:.85rem;line-height:1.6;}
+.drop strong{color:var(--t);}
+.drop-accepted{color:var(--a);font-size:.78rem;margin-top:.35rem;}
+
+/* PROGRESS */
+.prog-wrap{background:var(--s2);border-radius:100px;height:4px;overflow:hidden;margin-bottom:.75rem;display:none;}
+.prog-bar{height:100%;background:var(--a);border-radius:100px;width:0%;transition:width .3s;}
+
+/* CLIENT SELECT */
+.cselect{width:100%;background:var(--s2);border:1px solid var(--b);color:var(--t);
+  padding:.65rem .9rem;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:.88rem;outline:none;cursor:pointer;margin-bottom:.75rem;}
+
+/* CLIENTS LIST */
+.clist{display:flex;flex-direction:column;gap:.5rem;}
+.crow{background:var(--s2);border:1px solid var(--b);border-radius:10px;
+  padding:.85rem 1rem;display:flex;align-items:center;gap:.85rem;flex-wrap:wrap;}
+.cavatar{width:36px;height:36px;min-width:36px;border-radius:50%;background:var(--a);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#000;}
+.cinfo{flex:1;min-width:0;}
+.cname{font-weight:600;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cslug{font-size:.75rem;color:var(--a);margin-top:.1rem;}
+.cactions{display:flex;gap:.4rem;flex-wrap:wrap;}
+
+/* FILES MANAGER */
+.folder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.65rem;margin-bottom:1rem;}
+.folder-card{background:var(--s2);border:1px solid var(--b);border-radius:10px;
+  padding:.85rem;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
+.folder-card:hover{border-color:var(--b2);background:var(--s3);}
+.folder-card .fi-icon{font-size:1.6rem;margin-bottom:.35rem;}
+.folder-card .fi-name{font-size:.75rem;font-weight:500;color:var(--t2);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.folder-card .fi-del{position:absolute;top:.4rem;right:.4rem;background:none;border:none;
+  color:#555;cursor:pointer;font-size:.8rem;line-height:1;padding:.2rem;}
+.folder-card .fi-del:hover{color:#ff5757;}
+
+.flist{display:flex;flex-direction:column;gap:.35rem;}
+.frow{background:var(--s2);border:1px solid var(--b);border-radius:8px;
+  padding:.55rem .85rem;display:flex;align-items:center;gap:.65rem;}
+.frow-thumb{width:40px;height:40px;min-width:40px;border-radius:5px;overflow:hidden;background:var(--s3);flex-shrink:0;}
+.frow-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.frow-icon{font-size:.95rem;flex-shrink:0;width:40px;text-align:center;}
+.frow-name{flex:1;font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.frow-size{font-size:.7rem;color:var(--t2);flex-shrink:0;}
+.frow-actions{display:flex;gap:.3rem;flex-shrink:0;}
+
+.back-btn{display:none;align-items:center;gap:.5rem;background:var(--s2);border:1px solid var(--b2);
+  color:var(--t2);padding:.45rem .9rem;border-radius:var(--r);cursor:pointer;font-family:'Inter',sans-serif;
+  font-size:.8rem;font-weight:500;margin-bottom:.85rem;transition:all .15s;}
+.back-btn:hover{background:var(--s3);color:var(--t);}
+.back-btn.show{display:flex;}
+
+.breadcrumb{display:flex;align-items:center;gap:.4rem;margin-bottom:.85rem;font-size:.78rem;color:var(--t2);flex-wrap:wrap;}
+.breadcrumb span{cursor:pointer;transition:color .15s;}
+.breadcrumb span:hover{color:var(--t);}
+.breadcrumb .sep{color:var(--b2);}
+.breadcrumb .cur{color:var(--t);font-weight:500;cursor:default;}
+
+.link-box{display:flex;gap:.5rem;margin-top:.75rem;}
+.link-box input{flex:1;background:var(--s2);border:1px solid var(--b);color:var(--a);
+  padding:.6rem .9rem;border-radius:var(--r);font-family:monospace;font-size:.82rem;outline:none;}
+
+/* GALLERY */
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.85rem;}
+.gcard{background:var(--s);border:1px solid var(--b);border-radius:12px;overflow:hidden;transition:border-color .2s;}
+.gcard:hover{border-color:var(--b2);}
+.gthumb{width:100%;aspect-ratio:16/9;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--t2);}
+.gbody{padding:.75rem .9rem;}
+.gclient{font-weight:600;font-size:.85rem;margin-bottom:.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gmeta{font-size:.72rem;color:var(--t2);}
+
+/* MISC */
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--t2);}
+.empty .ico{font-size:2rem;margin-bottom:.5rem;}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);
+  background:var(--s);border:1px solid var(--b2);color:var(--t);padding:.65rem 1.25rem;
+  border-radius:8px;font-size:.82rem;opacity:0;pointer-events:none;transition:opacity .25s;z-index:9999;white-space:nowrap;}
+.toast.show{opacity:1;}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid #333;border-top-color:var(--a);
+  border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle;margin-right:4px;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.new-folder-row{display:flex;gap:.5rem;margin-bottom:1rem;}
+.new-folder-row input{flex:1;background:var(--s2);border:1px solid var(--b);color:var(--t);
+  padding:.6rem .9rem;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:.85rem;outline:none;}
+.new-folder-row input:focus{border-color:var(--a);}
+.section-sep{height:1px;background:var(--b);margin:1.25rem 0;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="brand">id<b>visual</b></div>
+    <div class="sub">Painel administrativo</div>
+    <div class="field"><label>Email</label><input type="email" id="adm-email" placeholder="seu@email.com" autocomplete="email"/></div>
+    <div class="field"><label>Senha</label><input type="password" id="adm-pass" placeholder="••••••••" autocomplete="current-password"/></div>
+    <button class="btn primary" id="adm-btn">Entrar</button>
+    <div class="err" id="adm-err">Email ou senha incorretos.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header>
+    <div class="brand-sm">id<b>visual</b></div>
+    <button class="btn ghost sm danger" id="logout-btn">Sair</button>
+  </header>
+  <div class="main">
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Clientes</div><div class="stat-value" id="s-clients">—</div></div>
+      <div class="stat"><div class="stat-label">Arquivos</div><div class="stat-value" id="s-files">—</div></div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="clients">👥 Clientes</div>
+      <div class="tab" data-tab="files">📁 Arquivos</div>
+      <div class="tab" data-tab="gallery">🖼 Galeria</div>
+    </div>
+
+    <!-- CLIENTS TAB -->
+    <div id="tab-clients">
+      <div class="panel">
+        <div class="panel-title">Novo cliente</div>
+        <div class="row2">
+          <div class="fi"><label>Nome *</label><input type="text" id="c-name" placeholder="Ex: Belona Center"/></div>
+          <div class="fi"><label>Slug do link *</label><input type="text" id="c-slug" placeholder="Ex: belona"/></div>
+        </div>
+        <button class="btn primary" id="create-client-btn" style="width:auto;">Criar cliente</button>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Clientes cadastrados</div>
+        <div class="clist" id="clist"><div class="empty"><span class="spin"></span></div></div>
+      </div>
+    </div>
+
+    <!-- FILES TAB -->
+    <div id="tab-files" style="display:none;">
+      <div class="panel">
+        <div class="panel-title">Gerenciar arquivos</div>
+        <div class="fi" style="margin-bottom:1rem;">
+          <label>Cliente *</label>
+          <select class="cselect" id="sel-client"><option value="">— escolha o cliente —</option></select>
+        </div>
+        <div id="files-manager" style="display:none;">
+          <div class="section-sep"></div>
+          <button class="back-btn" id="back-btn">← Voltar</button>
+          <div class="breadcrumb" id="breadcrumb"><span class="cur">📁 Raiz</span></div>
+          <div class="new-folder-row">
+            <input type="text" id="new-folder" placeholder="Nome da nova pasta (ex: Logos)"/>
+            <button class="btn accent sm" id="create-folder-btn">+ Pasta</button>
+          </div>
+          <div class="drop" id="drop-zone">
+            <div style="font-size:1.5rem;margin-bottom:.4rem">📎</div>
+            <p><strong>Arraste arquivos aqui</strong> ou clique para selecionar</p>
+            <p class="drop-accepted" id="drop-names"></p>
+            <input type="file" id="files-input" multiple style="display:none"/>
+          </div>
+          <div class="prog-wrap" id="prog-wrap"><div class="prog-bar" id="prog-bar"></div></div>
+          <button class="btn primary" id="upload-btn" style="width:auto;margin-bottom:1.25rem;">Enviar arquivos</button>
+          <div id="explorer"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GALLERY TAB -->
+    <div id="tab-gallery" style="display:none;">
+      <div class="panel">
+        <div class="panel-title">Todos os clientes</div>
+        <div class="gallery" id="gallery"><div class="empty"><span class="spin"></span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPA_URL = 'https://wxjpwvfgxhrigmsxpygy.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4anB3dmZneGhyaWdtc3hweWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzMDAzNTUsImV4cCI6MjA5NDg3NjM1NX0.n_09l57PL8vMS10Ie8tGZq5VZbp_nHSNiiIg9LhklAA';
+const BASE_URL = window.location.origin;
+const ADMIN_EMAIL = 'admindih@icloud.com';
+const ADMIN_PASS  = ''; // preenchido no login
+
+let session = null;
+let currentClient = null;
+let currentFolder = null;
+
+// ── SUPABASE HELPERS ──
+async function sb(path, opts={}) {
+  const headers = { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Prefer': 'return=representation' };
+  if (session) headers['Authorization'] = 'Bearer ' + session.access_token;
+  const res = await fetch(SUPA_URL + path, { ...opts, headers: { ...headers, ...(opts.headers||{}) } });
+  if (!res.ok) { const e = await res.json().catch(()=>({message:res.statusText})); throw new Error(e.message||e.error||res.statusText); }
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+async function sbStorage(method, path, body, extraHeaders={}) {
+  const headers = { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + session.access_token, ...extraHeaders };
+  const res = await fetch(SUPA_URL + '/storage/v1/object/' + path, { method, headers, body });
+  if (!res.ok) { const e = await res.json().catch(()=>({message:res.statusText})); throw new Error(e.message||e.error||res.statusText); }
+  return res.json().catch(()=>null);
+}
+
+// ── TOAST ──
+function toast(msg, ms=2800) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), ms);
+}
+
+// ── TABS ──
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.onclick = () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    ['clients','files','gallery'].forEach(id =>
+      document.getElementById('tab-'+id).style.display = tab.dataset.tab===id ? 'block' : 'none');
+    if (tab.dataset.tab==='clients') loadClients();
+    if (tab.dataset.tab==='gallery') loadGallery();
+    if (tab.dataset.tab==='files')   loadClientSelect();
+  };
+});
+
+// ── AUTH ──
+document.getElementById('adm-btn').onclick = async () => {
+  const email = document.getElementById('adm-email').value.trim();
+  const pass  = document.getElementById('adm-pass').value;
+  if (!email||!pass) return;
+  const btn = document.getElementById('adm-btn');
+  btn.disabled=true; btn.textContent='Entrando...';
+  document.getElementById('adm-err').style.display='none';
+  try {
+    const res = await fetch(SUPA_URL+'/auth/v1/token?grant_type=password', {
+      method:'POST', headers:{'Content-Type':'application/json','apikey':SUPA_KEY},
+      body: JSON.stringify({email, password:pass})
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error_description||data.error||'Erro');
+    if (data.user.email !== ADMIN_EMAIL) throw new Error('Acesso negado.');
+    session = data;
+    showApp();
+  } catch(e) {
+    document.getElementById('adm-err').style.display='block';
+    document.getElementById('adm-err').textContent = e.message;
+    btn.disabled=false; btn.textContent='Entrar';
+  }
+};
+document.getElementById('adm-pass').onkeydown = e => { if(e.key==='Enter') document.getElementById('adm-btn').click(); };
+document.getElementById('logout-btn').onclick = () => { session=null; document.getElementById('login-screen').style.display='flex'; document.getElementById('app').style.display='none'; };
+
+function showApp() {
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  loadStats(); loadClients();
+}
+
+// ── STATS ──
+async function loadStats() {
+  try {
+    const [clients, files] = await Promise.all([
+      sb('/rest/v1/clients?select=id'),
+      sb('/rest/v1/client_files?select=id')
+    ]);
+    document.getElementById('s-clients').textContent = clients.length;
+    document.getElementById('s-files').textContent   = files.length;
+  } catch {}
+}
+
+// ── SLUG ──
+function slugify(s) {
+  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+}
+document.getElementById('c-name').oninput = e => {
+  const sl = document.getElementById('c-slug');
+  if (!sl._touched) sl.value = slugify(e.target.value);
+};
+document.getElementById('c-slug').oninput = e => {
+  e.target._touched = true;
+  e.target.value = slugify(e.target.value);
+};
+
+// ── CREATE CLIENT ──
+document.getElementById('create-client-btn').onclick = async () => {
+  const name = document.getElementById('c-name').value.trim();
+  const slug = document.getElementById('c-slug').value.trim();
+  if (!name||!slug) { toast('Preencha nome e slug'); return; }
+  const btn = document.getElementById('create-client-btn');
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Criando...';
+  try {
+    await sb('/rest/v1/clients', { method:'POST', body: JSON.stringify({name, slug}) });
+    toast(`✓ Cliente "${name}" criado! Link: ${BASE_URL}/c/${slug}`);
+    document.getElementById('c-name').value='';
+    document.getElementById('c-slug').value='';
+    document.getElementById('c-slug')._touched=false;
+    loadStats(); loadClients(); loadClientSelect();
+  } catch(e) { toast('Erro: '+e.message, 4000); }
+  btn.disabled=false; btn.textContent='Criar cliente';
+};
+
+// ── LOAD CLIENTS ──
+async function loadClients() {
+  const list = document.getElementById('clist');
+  list.innerHTML = '<div class="empty"><span class="spin"></span></div>';
+  try {
+    const clients = await sb('/rest/v1/clients?select=*&order=created_at.desc');
+    if (!clients.length) { list.innerHTML='<div class="empty"><div class="ico">👥</div><p>Nenhum cliente ainda.</p></div>'; return; }
+    list.innerHTML='';
+    clients.forEach(c => {
+      const link = `${BASE_URL}/c/${c.slug}`;
+      const row = document.createElement('div');
+      row.className='crow';
+      row.innerHTML=`
+        <div class="cavatar">${c.name[0].toUpperCase()}</div>
+        <div class="cinfo">
+          <div class="cname">${c.name}</div>
+          <div class="cslug">seusite.com/c/${c.slug}</div>
+        </div>
+        <div class="cactions">
+          <button class="btn ghost sm" data-copy="${link}">🔗 Copiar link</button>
+          <button class="btn ghost sm danger" data-del="${c.id}" data-name="${c.name}">Apagar</button>
+        </div>`;
+      row.querySelector('[data-copy]').onclick = function() {
+        navigator.clipboard.writeText(this.dataset.copy).then(()=>toast('✓ Link copiado!'));
+      };
+      row.querySelector('[data-del]').onclick = async function() {
+        if (!confirm(`Apagar "${this.dataset.name}"?`)) return;
+        await sb(`/rest/v1/clients?id=eq.${this.dataset.del}`, {method:'DELETE'});
+        toast('Cliente apagado.'); loadClients(); loadStats();
+      };
+      list.appendChild(row);
+    });
+  } catch(e) { toast('Erro: '+e.message); }
+}
+
+// ── CLIENT SELECT ──
+async function loadClientSelect() {
+  const sel = document.getElementById('sel-client');
+  try {
+    const clients = await sb('/rest/v1/clients?select=*&order=name.asc');
+    sel.innerHTML='<option value="">— escolha o cliente —</option>';
+    clients.forEach(c => {
+      const o = document.createElement('option');
+      o.value=c.id+'|'+c.slug; o.textContent=c.name;
+      sel.appendChild(o);
+    });
+  } catch {}
+}
+
+document.getElementById('sel-client').onchange = function() {
+  if (!this.value) { document.getElementById('files-manager').style.display='none'; return; }
+  const [id, slug] = this.value.split('|');
+  currentClient = { id, slug };
+  currentFolder = null;
+  document.getElementById('files-manager').style.display='block';
+  renderExplorer();
+};
+
+// ── DROP ZONE ──
+const dropZone  = document.getElementById('drop-zone');
+const filesInp  = document.getElementById('files-input');
+let selectedFiles = [];
+dropZone.onclick = () => filesInp.click();
+dropZone.ondragover = e => { e.preventDefault(); dropZone.classList.add('over'); };
+dropZone.ondragleave = () => dropZone.classList.remove('over');
+dropZone.ondrop = e => { e.preventDefault(); dropZone.classList.remove('over'); setFiles([...e.dataTransfer.files]); };
+filesInp.onchange = e => setFiles([...e.target.files]);
+function setFiles(files) {
+  selectedFiles = files;
+  document.getElementById('drop-names').textContent = files.map(f=>f.name).join(', ');
+}
+
+// ── CREATE FOLDER ──
+document.getElementById('create-folder-btn').onclick = async () => {
+  const name = document.getElementById('new-folder').value.trim();
+  if (!name||!currentClient) { toast('Digite o nome da pasta'); return; }
+  const path = currentFolder ? `${currentFolder}/${name}` : name;
+  try {
+    await sb('/rest/v1/client_folders', { method:'POST', body: JSON.stringify({
+      client_id: currentClient.id, name, path, parent: currentFolder||null
+    })});
+    document.getElementById('new-folder').value='';
+    toast(`✓ Pasta "${name}" criada!`);
+    renderExplorer();
+  } catch(e) { toast('Erro: '+e.message); }
+};
+
+// ── UPLOAD FILES ──
+document.getElementById('upload-btn').onclick = async () => {
+  if (!selectedFiles.length) { toast('Selecione os arquivos'); return; }
+  if (!currentClient)        { toast('Selecione o cliente'); return; }
+  const btn = document.getElementById('upload-btn');
+  btn.disabled=true;
+  const pw = document.getElementById('prog-wrap');
+  const pb = document.getElementById('prog-bar');
+  pw.style.display='block'; pb.style.width='0%';
+
+  try {
+    for (let i=0; i<selectedFiles.length; i++) {
+      const f = selectedFiles[i];
+      const safeName = f.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const folder   = currentFolder ? currentFolder+'/' : '';
+      const stoPath  = `${currentClient.slug}/${folder}${Date.now()}_${safeName}`;
+      const mime     = f.type || getMime(f.name);
+
+      btn.innerHTML = `<span class="spin"></span> ${i+1}/${selectedFiles.length} — ${f.name}`;
+
+      // upload to supabase storage
+      const upRes = await fetch(`${SUPA_URL}/storage/v1/object/idvisual/${stoPath}`, {
+        method:'POST',
+        headers:{ 'Authorization':'Bearer '+session.access_token, 'apikey':SUPA_KEY, 'Content-Type':mime, 'x-upsert':'true' },
+        body: f
+      });
+      if (!upRes.ok) { const e=await upRes.json(); throw new Error(e.message||'Erro no upload de '+f.name); }
+
+      const url = `${SUPA_URL}/storage/v1/object/public/idvisual/${stoPath}`;
+
+      // save to db
+      await sb('/rest/v1/client_files', { method:'POST', body: JSON.stringify({
+        client_id: currentClient.id,
+        folder: currentFolder||null,
+        name: f.name,
+        size: f.size,
+        type: mime,
+        url,
+        storage_path: stoPath
+      })});
+
+      pb.style.width = Math.round((i+1)/selectedFiles.length*100)+'%';
+    }
+    toast(`✓ ${selectedFiles.length} arquivo(s) enviado(s)!`);
+    selectedFiles=[];
+    document.getElementById('drop-names').textContent='';
+    filesInp.value='';
+    loadStats(); renderExplorer();
+  } catch(e) { toast('Erro: '+e.message, 4000); }
+
+  pw.style.display='none'; pb.style.width='0%';
+  btn.disabled=false; btn.textContent='Enviar arquivos';
+};
+
+// ── EXPLORER ──
+async function renderExplorer() {
+  const exp = document.getElementById('explorer');
+  exp.innerHTML = '<div class="empty"><span class="spin"></span></div>';
+  updateBreadcrumb();
+  const backBtn = document.getElementById('back-btn');
+  if (currentFolder) {
+    backBtn.classList.add('show');
+    const parts = currentFolder.split('/');
+    backBtn.onclick = () => { currentFolder = parts.length>1 ? parts.slice(0,-1).join('/') : null; renderExplorer(); };
+  } else {
+    backBtn.classList.remove('show');
+  }
+
+  try {
+    const [folders, files] = await Promise.all([
+      sb(`/rest/v1/client_folders?client_id=eq.${currentClient.id}&parent=eq.${currentFolder||'null'}&order=name.asc`),
+      sb(`/rest/v1/client_files?client_id=eq.${currentClient.id}&folder=eq.${currentFolder||'null'}&order=name.asc`)
+    ]);
+
+    if (!folders.length && !files.length) {
+      exp.innerHTML='<div class="empty"><div class="ico">📂</div><p>Pasta vazia.</p></div>'; return;
+    }
+    exp.innerHTML='';
+
+    if (folders.length) {
+      const grid = document.createElement('div'); grid.className='folder-grid';
+      folders.forEach(f => {
+        const card = document.createElement('div'); card.className='folder-card';
+        card.innerHTML=`<button class="fi-del" data-fid="${f.id}" title="Apagar pasta">✕</button>
+          <div class="fi-icon">📁</div><div class="fi-name">${f.name}</div>`;
+        card.querySelector('.fi-icon').onclick = card.querySelector('.fi-name').onclick = () => { currentFolder=f.path; renderExplorer(); };
+        card.querySelector('.fi-del').onclick = async function(e) {
+          e.stopPropagation();
+          if (!confirm(`Apagar pasta "${f.name}"?`)) return;
+          await sb(`/rest/v1/client_folders?id=eq.${f.id}`,{method:'DELETE'});
+          toast('Pasta apagada.'); renderExplorer();
+        };
+        grid.appendChild(card);
+      });
+      exp.appendChild(grid);
+    }
+
+    if (files.length) {
+      const list = document.createElement('div'); list.className='flist';
+      files.forEach(f => {
+        const row = document.createElement('div'); row.className='frow';
+        const isImg = /\.(png|jpg|jpeg|webp|gif|svg)$/i.test(f.name);
+        const size  = f.size<1048576 ? Math.round(f.size/1024)+'KB' : (f.size/1048576).toFixed(1)+'MB';
+        row.innerHTML=`
+          ${isImg
+            ? `<div class="frow-thumb"><img src="${f.url}" loading="lazy"/></div>`
+            : `<div class="frow-icon">${getFileIcon(f.name)}</div>`}
+          <div class="frow-name">${f.name}</div>
+          <div class="frow-size">${size}</div>
+          <div class="frow-actions">
+            <button class="btn ghost sm" onclick="window.open('${f.url}','_blank')">Ver</button>
+            <button class="btn ghost sm danger" data-fid="${f.id}" data-path="${f.storage_path}">✕</button>
+          </div>`;
+        row.querySelector('.btn.danger').onclick = async function() {
+          if (!confirm(`Apagar "${f.name}"?`)) return;
+          await sb(`/rest/v1/client_files?id=eq.${f.id}`,{method:'DELETE'});
+          // delete from storage
+          await fetch(`${SUPA_URL}/storage/v1/object/idvisual/${f.storage_path}`,{
+            method:'DELETE', headers:{'Authorization':'Bearer '+session.access_token,'apikey':SUPA_KEY}
+          }).catch(()=>{});
+          toast('Arquivo apagado.'); renderExplorer(); loadStats();
+        };
+        list.appendChild(row);
+      });
+      exp.appendChild(list);
+    }
+  } catch(e) { toast('Erro: '+e.message); }
+}
+
+function updateBreadcrumb() {
+  const bc = document.getElementById('breadcrumb');
+  if (!currentFolder) { bc.innerHTML='<span class="cur">📁 Raiz</span>'; return; }
+  const parts = currentFolder.split('/');
+  let html = '<span id="bc-root">📁 Raiz</span>';
+  parts.forEach((p,i) => {
+    html += ' <span class="sep">/</span> ';
+    if (i===parts.length-1) html+=`<span class="cur">${p}</span>`;
+    else html+=`<span data-path="${parts.slice(0,i+1).join('/')}">${p}</span>`;
+  });
+  bc.innerHTML=html;
+  document.getElementById('bc-root').onclick = () => { currentFolder=null; renderExplorer(); };
+  bc.querySelectorAll('[data-path]').forEach(el => el.onclick=()=>{ currentFolder=el.dataset.path; renderExplorer(); });
+}
+
+// ── GALLERY ──
+async function loadGallery() {
+  const gallery = document.getElementById('gallery');
+  gallery.innerHTML='<div class="empty"><span class="spin"></span></div>';
+  try {
+    const clients = await sb('/rest/v1/clients?select=*&order=name.asc');
+    if (!clients.length) { gallery.innerHTML='<div class="empty"><div class="ico">👥</div><p>Nenhum cliente.</p></div>'; return; }
+    gallery.innerHTML='';
+    clients.forEach(c => {
+      const card = document.createElement('div'); card.className='gcard';
+      const link = `${BASE_URL}/c/${c.slug}`;
+      card.innerHTML=`
+        <div class="gthumb">${c.name[0].toUpperCase()}</div>
+        <div class="gbody">
+          <div class="gclient">${c.name}</div>
+          <div class="gmeta">/c/${c.slug}</div>
+          <div style="margin-top:.65rem;display:flex;gap:.4rem;">
+            <button class="btn ghost sm" data-copy="${link}" style="flex:1;">🔗 Link</button>
+            <button class="btn accent sm" onclick="window.open('${link}','_blank')" style="flex:1;">Ver</button>
+          </div>
+        </div>`;
+      card.querySelector('[data-copy]').onclick = function() {
+        navigator.clipboard.writeText(this.dataset.copy).then(()=>toast('✓ Copiado!'));
+      };
+      gallery.appendChild(card);
+    });
+  } catch(e) { toast('Erro: '+e.message); }
+}
+
+// ── HELPERS ──
+function getMime(name) {
+  const ext = name.split('.').pop().toLowerCase();
+  return {'png':'image/png','jpg':'image/jpeg','jpeg':'image/jpeg','webp':'image/webp',
+    'gif':'image/gif','svg':'image/svg+xml','pdf':'application/pdf','zip':'application/zip',
+    'ttf':'font/ttf','otf':'font/otf','woff':'font/woff','woff2':'font/woff2',
+    'ai':'application/postscript','eps':'application/postscript','psd':'image/vnd.adobe.photoshop'
+  }[ext] || 'application/octet-stream';
+}
+function getFileIcon(name) {
+  const ext = name.split('.').pop().toLowerCase();
+  if (['pdf'].includes(ext)) return '📄';
+  if (['zip','rar'].includes(ext)) return '📦';
+  if (['ttf','otf','woff','woff2'].includes(ext)) return '🔤';
+  if (['ai','eps','psd'].includes(ext)) return '🎨';
+  if (['doc','docx'].includes(ext)) return '📝';
+  return '📎';
+}
+</script>
+</body>
+</html>
