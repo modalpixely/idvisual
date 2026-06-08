@@ -533,8 +533,8 @@ async function renderExplorer() {
 
   try {
     const [folders, files] = await Promise.all([
-      sb(`/rest/v1/client_folders?client_id=eq.${currentClient.id}&parent=eq.${currentFolder||'null'}&order=name.asc`),
-      sb(`/rest/v1/client_files?client_id=eq.${currentClient.id}&folder=eq.${currentFolder||'null'}&order=name.asc`)
+      sb(`/rest/v1/client_folders?client_id=eq.${currentClient.id}&parent=${currentFolder ? 'eq.'+encodeURIComponent(currentFolder) : 'is.null'}&order=name.asc`),
+      sb(`/rest/v1/client_files?client_id=eq.${currentClient.id}&folder=${currentFolder ? 'eq.'+encodeURIComponent(currentFolder) : 'is.null'}&order=name.asc`)
     ]);
 
     if (!folders.length && !files.length) {
